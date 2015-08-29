@@ -57,7 +57,6 @@ def registerPlayer(name):
     try:
         conn = connect()
         cur = conn.cursor()
-        print name
         cur.execute("""INSERT INTO Players(Name) Values (%s)""", (bleach.clean(name), ))
         conn.commit()
         cur.close()
@@ -78,6 +77,17 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    try:
+        conn = connect()
+        cur = conn.cursor()
+        cur.execute("""SELECT * FROM CURRENT_STANDINGS;""");
+        result = cur.fetchall()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return result
+    except:
+        print 'Unable to connect to the database'
 
 
 def reportMatch(winner, loser):
@@ -87,7 +97,30 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+    try:
+        conn = connect()
+        cur = conn.cursor()
+        cur.execute("""UPDATE Tournament SET matches=array_append(matches, %s),
+                                             results=array_append(results, 'win') where Player1=%s""",
+                                             (loser, winner));
+        cur.execute("""UPDATE Tournament SET matches=array_append(matches, %s),
+                                             results=array_append(results, 'lose') where Player1=%s""",
+                                             (winner, loser));
+        conn.commit()
+        cur.close()
+        conn.close()
+    except:
+        print 'Unable to connect to the database'
+    
  
  
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match."""
+    standings = playerStandings()
+    size = len(standings)
+    l = []
+    i = 0
+    while(i < size-1):
+        l.append([standings[i][0], standings[i][1], standings[i+1][0], standings[i+1][1]])
+        i += 2
+    return l

@@ -126,12 +126,12 @@ def testPairings():
 
 
 if __name__ == '__main__':
-#    testDeleteMatches()
-#   testDelete() 
+    testDeleteMatches()
+    testDelete() 
     testCount()
     testRegister()
     testRegisterCountDelete()
-#    testStandingsBeforeMatches()
-#    testReportMatches()
-#    testPairings()
+    testStandingsBeforeMatches()
+    testReportMatches()
+    testPairings()
     print "Success!  All tests pass!"
