@@ -14,6 +14,15 @@ def connect():
 
 def deleteMatches():
     """Remove all the match records from the database."""
+    try:
+        conn = connect()
+        cur = conn.cursor()
+        cur.execute("""DELETE FROM Tournament;""")
+        conn.commit()
+        cur.close()
+        conn.close()
+    except:
+        print 'Unable to connect to the database'
 
 
 def deletePlayers():
@@ -48,6 +57,7 @@ def registerPlayer(name):
     try:
         conn = connect()
         cur = conn.cursor()
+        print name
         cur.execute("""INSERT INTO Players(Name) Values (%s)""", (bleach.clean(name), ))
         conn.commit()
         cur.close()
