@@ -9,14 +9,14 @@
 ------------------------------------------------------------------        
 -- Stores currently registered playes
 CREATE TABLE Players(
-        Id SERIAL PRIMARY KEY, 
+        Id SERIAL PRIMARY KEY,
         Name TEXT);
 ------------------------------------------------------------------        
 
 --Store information of matches of the tournament
-CREATE TYPE Result as ENUM('win', 'lose');
+CREATE TYPE Result as ENUM('win', 'lose'); --Represents possible outcomes of a match
 CREATE TABLE Tournament(
-        PLAYER1 Integer references Players(Id) ON DELETE CASCADE, 
+        PLAYER1 Integer references Players(Id) ON DELETE CASCADE, --Makes sure player is present in Players Table 
         matches integer[], 
         results Result[]);
 ------------------------------------------------------------------        
@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION add_player_tournament()
     RETURNS TRIGGER AS
 $$
 BEGIN
-    INSERT INTO Tournament VALUES(NEW.Id, NULL, NULL);
+    INSERT INTO Tournament VALUES(NEW.Id, NULL, NULL); --Initialize matches and results to NULL
 
     RETURN NEW;
 END;
@@ -47,7 +47,7 @@ DECLARE
     wins int := 0;
     x Result;
 BEGIN
-    FOREACH x in ARRAY $1
+    FOREACH x in ARRAY $1 --Loop through results of a player
     LOOP
         IF x = 'win' THEN
             wins := wins + 1;
@@ -67,7 +67,7 @@ DECLARE
     x int;
     matches int := 0;
 BEGIN
-    FOREACH x in ARRAY $1
+    FOREACH x in ARRAY $1 --Loops through matches played by a player
     LOOP
         matches := matches + 1;
     END LOOP;
@@ -79,7 +79,7 @@ $$ LANGUAGE 'plpgsql';
 
 ------------------------------------------------------------------
 
---View to give Player Standings
+--View to give Current Standing of a player. It's Id, name wins and matches
 CREATE VIEW Current_Standings as 
     select id, name, 
            count_wins(results) as wins,
