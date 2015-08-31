@@ -4,7 +4,7 @@
 #
 
 import psycopg2
-import bleach
+import bleach #Whitelist based HTML sanitization library
 
 
 def connect():
@@ -54,6 +54,7 @@ def countPlayers():
 	
 
 def registerPlayer(name):
+    """Registers a player for the tournament"""
     try:
         conn = connect()
         cur = conn.cursor()
@@ -100,9 +101,12 @@ def reportMatch(winner, loser):
     try:
         conn = connect()
         cur = conn.cursor()
-        cur.execute("""UPDATE Tournament SET matches=array_append(matches, %s),
+        """Appends match and outcome of the match for the winner"""
+        cur.execute("""UPDATE Tournament SET matches=array_append(matches, %s), 
                                              results=array_append(results, 'win') where Player1=%s""",
                                              (loser, winner));
+                                             
+        """Appends match and outcome of the match for the loser"""
         cur.execute("""UPDATE Tournament SET matches=array_append(matches, %s),
                                              results=array_append(results, 'lose') where Player1=%s""",
                                              (winner, loser));
@@ -121,6 +125,7 @@ def swissPairings():
     l = []
     i = 0
     while(i < size-1):
+    	"""Insert into the list a tuple containing the next round opponent names and ID's """
         l.append([standings[i][0], standings[i][1], standings[i+1][0], standings[i+1][1]])
         i += 2
     return l
