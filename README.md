@@ -23,9 +23,10 @@ Software Requirements:
 2) Python version 2.7.9
 
 Version
-1.1
+1.2
 
 Change History:
+09/1/2015 - Incorporated Review Comments
 08/31/2015 - Incorporated Review Comments
 
 Contact Information

@@ -54,10 +54,18 @@ def countPlayers():
 	
 
 def registerPlayer(name):
-    """Registers a player for the tournament"""
+    """Registers a player for the tournament
+    
+    Arg: 
+      Name of the player
+    
+    """
     try:
         conn = connect()
         cur = conn.cursor()
+	''' Adding a player to the Players Table registers players for a tournament
+	    by making an entry into tournament table through a trigger
+	'''
         cur.execute("""INSERT INTO Players(Name) Values (%s)""", (bleach.clean(name), ))
         conn.commit()
         cur.close()
@@ -103,12 +111,12 @@ def reportMatch(winner, loser):
         cur = conn.cursor()
         """Appends match and outcome of the match for the winner"""
         cur.execute("""UPDATE Tournament SET matches=array_append(matches, %s), 
-                                             results=array_append(results, 'win') where Player1=%s""",
+                                             results=array_append(results, 'win') where PlayerId=%s""",
                                              (loser, winner));
                                              
         """Appends match and outcome of the match for the loser"""
         cur.execute("""UPDATE Tournament SET matches=array_append(matches, %s),
-                                             results=array_append(results, 'lose') where Player1=%s""",
+                                             results=array_append(results, 'lose') where PlayerId=%s""",
                                              (winner, loser));
         conn.commit()
         cur.close()
@@ -119,10 +127,18 @@ def reportMatch(winner, loser):
  
  
 def swissPairings():
-    """Returns a list of pairs of players for the next round of a match."""
+    """Returns a list of pairs of players for the next round of a match.
+    
+    Returns:
+      A list where each entry is a tuple where each tuple contains:
+      First Player's Name
+      First Player's Id
+      Next Round Opponent's Name
+      Next Round Opponent;s Id
+    """
     standings = playerStandings()
     size = len(standings)
-    l = []
+    l = [] 
     i = 0
     while(i < size-1):
     	"""Insert into the list a tuple containing the next round opponent names and ID's """

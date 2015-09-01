@@ -7,18 +7,17 @@
 -- these lines here.
 
 ------------------------------------------------------------------        
--- Stores currently registered playes
+-- Stores currently registered players
 CREATE TABLE Players(
         Id SERIAL PRIMARY KEY,
         Name TEXT);
 ------------------------------------------------------------------        
-
 --Store information of matches of the tournament
 CREATE TYPE Result as ENUM('win', 'lose'); --Represents possible outcomes of a match
 CREATE TABLE Tournament(
-        PLAYER1 Integer references Players(Id) ON DELETE CASCADE, --Makes sure player is present in Players Table 
-        matches integer[], 
-        results Result[]);
+        PlayerId Integer references Players(Id) ON DELETE CASCADE, --Makes sure player is present in Players Table 
+        Matches Integer[], 
+        Results Result[]);
 ------------------------------------------------------------------        
 
 --Trigger function to invoke when a new player is added
@@ -85,7 +84,7 @@ CREATE VIEW Current_Standings as
            count_wins(results) as wins,
            count_matches(matches) as matches
     from Players P, Tournament T
-    where P.Id = T.PLAYER1
+    where P.Id = T.PlayerId
     ORDER BY wins DESC;
 
 ------------------------------------------------------------------        
